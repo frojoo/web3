@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import Web3 from "web3";
-import { TOKEN_ABI, TOKEN_ADDRESS } from "./web3.config";
+import { NFT_ABI, NFT_ADDRESS, TOKEN_ABI, TOKEN_ADDRESS } from "./web3.config";
 
 const web3 = new Web3(window.ethereum);
 
 const tokenContract = new web3.eth.Contract(TOKEN_ABI, TOKEN_ADDRESS);
+const nftContract = new web3.eth.Contract(NFT_ABI, NFT_ADDRESS);
 
 function App() {
   const [address, setAddress] = useState("");
@@ -40,6 +41,23 @@ function App() {
     }
   };
 
+  //Sending NFT Mint
+  const onClickMint = async () => {
+    try {
+      const result = await nftContract.methods
+        .mintNft(
+          "https://gateway.pinata.cloud/ipfs/QmfS7tQwe9tkmcaHzS5foJkPwCFFSTM2fydej3CTVoVm5x"
+        )
+        .send({
+          from: address,
+        });
+
+      console.log(result);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-200 flex justify-center items-center">
       {address ? (
@@ -56,6 +74,11 @@ function App() {
             )}
             <button className="btn-style ml-4" onClick={onClickBalance}>
               Balance
+            </button>
+          </div>
+          <div className="flex items-center mt-4">
+            <button className="btn-style ml-4" onClick={onClickMint}>
+              Mint
             </button>
           </div>
         </div>
